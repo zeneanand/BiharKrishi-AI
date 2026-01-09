@@ -1,55 +1,8 @@
-
-import streamlit as st
-import google.generativeai as genai
-
-# --- APP CONFIGURATION ---
-st.set_page_config(page_title="BiharKrishi AI", page_icon="🌾", layout="wide")
-
-# --- SIDEBAR: API KEY & PERSONA ---
-with st.sidebar:
-    st.title("👤 User Profile")
-    st.success("**Farmer:** Ram Kumar Baitha")
-    st.info("**Location:** Kishanganj, Bihar\n\n**Land Size:** 0.25 Hectares")
-    api_key = st.text_input("Enter Gemini API Key", type="password")
-
-# --- GEMINI API SETUP ---
-if api_key:
-    genai.configure(api_key=api_key)
-    
-    # Model parameters for factual agricultural advice
-    generation_config = {
-        "temperature": 0.2, 
-        "max_output_tokens": 400,
-    }
-    
-    model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
-        generation_config=generation_config
-    )
-
-    # --- MAIN UI ---
-    st.title("🌾 BiharKrishi AI: Smart Farming Assistant")
-    # Line 31: Syntax Error fixed here
-    st.subheader("Solving Bihar's Flood-Drought Paradox with Generative AI")
-
-    # Inputs based on FA-2 Requirements (Location, Crop Stage, Preferences)
-    col1, col2 = st.columns(2)
-    with col1:
-        location = st.selectbox("Select your District:", ["Kishanganj", "Gaya", "Saharsa", "Samastipur", "Muzaffarpur", "Purnea"])
-        crop_stage = st.selectbox("Current Crop Stage:", ["Sowing", "Vegetative", "Flowering", "Harvesting"])
-    
-    with col2:
-        category = st.selectbox("What do you need help with?", [
-            "Flood-Ready Crops", "Diesel Cost Saving", "Seed Selection", 
-            "Pest Management", "Soil & Fertilizer", "Sustainable Tips"
-        ])
-
-    user_query = st.text_input("Enter your specific farming question:")
-
-    if st.button("Get AI Advice"):
-        if user_query:
+if st.button("Get AI Advice"):
+        # Validation: Check if all inputs are present
+        if user_query and location and crop_stage:
             with st.spinner("Analyzing regional data..."):
-                # Optimized System Prompt for Bihar context
+                # Constructing the prompt carefully
                 full_prompt = f"""
                 You are an expert Bihar agricultural consultant. 
                 Context: Farmer in {location}, Bihar. Crop Stage: {crop_stage}.
@@ -57,15 +10,21 @@ if api_key:
                 
                 Instructions: Provide a formatted response with:
                 1. A bulleted list of actionable steps.
-                2. A brief 'Why' or justification for each suggestion to build trust.
+                2. A brief 'Why' or justification for each suggestion.
                 3. Simple, non-technical language.
                 """
                 
-                response = model.generate_content(full_prompt)
-                
-                st.markdown("### 💡 Expert Recommendations")
-                st.write(response.text)
+                try:
+                    response = model.generate_content(full_prompt)
+                    
+                    # Check if response has valid text to prevent further errors
+                    if response.text:
+                        st.markdown("### 💡 Expert Recommendations")
+                        st.write(response.text)
+                    else:
+                        st.error("The model returned an empty response. Please try rephrasing.")
+                        
+                except Exception as e:
+                    st.error(f"API Error: {e}. Please check if your API Key is active and has enough quota.")
         else:
-            st.warning("Please enter a question.")
-else:
-    st.warning("Please enter your Gemini API Key in the sidebar to begin.")
+            st.warning("Please ensure you have selected a District, Crop Stage, and entered a question.")
