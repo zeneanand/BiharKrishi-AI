@@ -16,7 +16,7 @@ if api_key:
     try:
         genai.configure(api_key=api_key)
         
-        # Step 5: Optimized Model Parameters (Temperature 0.2 for accuracy)
+        # Model parameters for factual agricultural advice (FA-2 Requirement)
         generation_config = {
             "temperature": 0.2, 
             "max_output_tokens": 400,
@@ -31,45 +31,44 @@ if api_key:
         st.title("🌾 BiharKrishi AI: Smart Farming Assistant")
         st.subheader("Solving Bihar's Flood-Drought Paradox with Generative AI")
 
-        # Step 6: Inputs for Location and Crop Stage
+        # CHANGED: Using st.text_input instead of st.selectbox for manual typing
         col1, col2 = st.columns(2)
         with col1:
-            location = st.selectbox("Select your District:", ["Kishanganj", "Gaya", "Saharsa", "Samastipur", "Muzaffarpur", "Purnea"])
-            crop_stage = st.selectbox("Current Crop Stage:", ["Sowing", "Vegetative", "Flowering", "Harvesting"])
+            location = st.text_input("Enter your District:", value="Samastipur")
+            crop_stage = st.text_input("Enter Current Crop Stage:", value="Vegetative")
         
         with col2:
-            category = st.selectbox("What do you need help with?", [
-                "Flood-Ready Crops", "Diesel Cost Saving", "Seed Selection", 
-                "Pest Management", "Soil & Fertilizer", "Sustainable Tips"
-            ])
+            category = st.text_input("What do you need help with?", value="Diesel Cost Saving")
 
-        user_query = st.text_input("Enter your specific farming question:")
+        user_query = st.text_input("Enter your specific farming question (e.g., How to save fuel?)")
 
-        # Step 4: Logic for Actionable & Justified Output
+        # --- OUTPUT FORMATTING & REASONING (Step 4) ---
         if st.button("Get AI Advice"):
-            if user_query:
+            if user_query and location and crop_stage:
                 with st.spinner("Analyzing regional data..."):
                     # Optimized System Prompt for Bihar context
                     full_prompt = f"""
                     You are an expert Bihar agricultural consultant. 
                     Context: Farmer in {location}, Bihar. Crop Stage: {crop_stage}.
+                    Category: {category}.
                     Question: {user_query}
                     
-                    Instructions: Provide a formatted response with:
-                    1. A bulleted list of actionable steps.
-                    2. A brief 'Why' (justification) for each suggestion to build trust.
-                    3. Simple, non-technical language for a layperson.
+                    Instructions: Provide a formatted response as per FA-2 standards:
+                    1. Use a bulleted list for actionable instructions.
+                    2. Include a brief 'Why' (reasoning) for each suggestion to build trust.
+                    3. Use simple, non-technical language for a farmer.
                     """
                     
                     response = model.generate_content(full_prompt)
                     
+                    # Displaying formatted Gemini output
                     st.markdown("### 💡 Expert Recommendations")
                     st.write(response.text)
             else:
-                st.warning("Please enter a question.")
+                st.warning("Please fill in all the text fields and enter a question.")
                 
     except Exception as e:
         st.error(f"Configuration Error: {e}")
 else:
     st.warning("Please enter your Gemini API Key in the sidebar to begin.")
-        
+    
