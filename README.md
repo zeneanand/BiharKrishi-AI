@@ -103,9 +103,3 @@ streamlit run app.py
 
 ```
 
-
-
-## 📸 Screenshots
-
-*[Insert screenshot of your app interface here]*
-*[Insert screenshot of a successful model interaction here]*
