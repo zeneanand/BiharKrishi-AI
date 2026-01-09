@@ -4,11 +4,15 @@ import google.generativeai as genai
 # --- APP CONFIGURATION ---
 st.set_page_config(page_title="BiharKrishi AI", page_icon="🌾", layout="wide")
 
-# --- SIDEBAR: API KEY & PERSONA ---
+# --- SIDEBAR: EDITABLE USER PROFILE (Requirement for User Interaction Monitoring) ---
 with st.sidebar:
     st.title("👤 User Profile")
-    st.success("**Farmer:** Ram Kumar Baitha")
-    st.info("**Location:** Kishanganj, Bihar\n\n**Land Size:** 0.25 Hectares")
+    # CHANGED: Static text replaced with st.text_input as requested
+    farmer_name = st.text_input("Farmer Name:", value="Ram Kumar Baitha")
+    farmer_location = st.text_input("Home Location:", value="Kishanganj, Bihar")
+    land_size = st.text_input("Land Size (Hectares):", value="0.25")
+    
+    st.divider()
     api_key = st.text_input("Enter Gemini API Key", type="password")
 
 # --- GEMINI API SETUP ---
@@ -16,7 +20,7 @@ if api_key:
     try:
         genai.configure(api_key=api_key)
         
-        # Model parameters for factual agricultural advice (FA-2 Requirement)
+        # Step 5: Optimized Model Parameters (Temperature 0.2 for factual accuracy)
         generation_config = {
             "temperature": 0.2, 
             "max_output_tokens": 400,
@@ -31,44 +35,43 @@ if api_key:
         st.title("🌾 BiharKrishi AI: Smart Farming Assistant")
         st.subheader("Solving Bihar's Flood-Drought Paradox with Generative AI")
 
-        # CHANGED: Using st.text_input instead of st.selectbox for manual typing
+        # Inputs for specific query context
         col1, col2 = st.columns(2)
         with col1:
-            location = st.text_input("Enter your District:", value="Samastipur")
-            crop_stage = st.text_input("Enter Current Crop Stage:", value="Vegetative")
+            # Using text_input for District as requested in previous turn
+            location = st.text_input("Select your District:", value="Samastipur")
+            crop_stage = st.text_input("Current Crop Stage:", value="Vegetative")
         
         with col2:
             category = st.text_input("What do you need help with?", value="Diesel Cost Saving")
 
-        user_query = st.text_input("Enter your specific farming question (e.g., How to save fuel?)")
+        user_query = st.text_input("Enter your specific farming question:")
 
         # --- OUTPUT FORMATTING & REASONING (Step 4) ---
         if st.button("Get AI Advice"):
-            if user_query and location and crop_stage:
+            if user_query and location:
                 with st.spinner("Analyzing regional data..."):
-                    # Optimized System Prompt for Bihar context
+                    # The prompt now includes the profile info from the sidebar text boxes
                     full_prompt = f"""
                     You are an expert Bihar agricultural consultant. 
-                    Context: Farmer in {location}, Bihar. Crop Stage: {crop_stage}.
-                    Category: {category}.
+                    User Profile: {farmer_name} from {farmer_location} with {land_size} hectares.
+                    Current Query Context: District {location}, Crop Stage {crop_stage}.
                     Question: {user_query}
                     
                     Instructions: Provide a formatted response as per FA-2 standards:
-                    1. Use a bulleted list for actionable instructions.
-                    2. Include a brief 'Why' (reasoning) for each suggestion to build trust.
-                    3. Use simple, non-technical language for a farmer.
+                    1. A bulleted list of actionable steps.
+                    2. A brief 'Why' (justification) for each suggestion to build trust.
+                    3. Simple, non-technical language for a layperson.
                     """
                     
                     response = model.generate_content(full_prompt)
                     
-                    # Displaying formatted Gemini output
                     st.markdown("### 💡 Expert Recommendations")
                     st.write(response.text)
             else:
-                st.warning("Please fill in all the text fields and enter a question.")
+                st.warning("Please ensure you have entered your district and a question.")
                 
     except Exception as e:
         st.error(f"Configuration Error: {e}")
 else:
     st.warning("Please enter your Gemini API Key in the sidebar to begin.")
-    
