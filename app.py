@@ -1,3 +1,4 @@
+
 import streamlit as st
 import google.generativeai as genai
 
@@ -28,7 +29,8 @@ if api_key:
 
     # --- MAIN UI ---
     st.title("🌾 BiharKrishi AI: Smart Farming Assistant")
-    st.subheader("Solving Bihar's Flood-Drought Paradox with Generative AI")https://github.com/zeneanand/BiharKrishi-AI/tree/main
+    # Line 31: Syntax Error fixed here
+    st.subheader("Solving Bihar's Flood-Drought Paradox with Generative AI")
 
     # Inputs based on FA-2 Requirements (Location, Crop Stage, Preferences)
     col1, col2 = st.columns(2)
