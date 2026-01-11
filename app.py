@@ -1,6 +1,13 @@
 import streamlit as st
 import google.generativeai as genai
-
+# SECURE API KEY RETRIEVAL
+# This looks for the key in the Streamlit Cloud dashboard settings
+if "GOOGLE_API_KEY" in st.secrets:
+    api_key = st.secrets["GOOGLE_API_KEY"]
+    genai.configure(api_key=api_key)
+else:
+    st.error("⚠️ API Key missing! Please add 'GOOGLE_API_KEY' to Streamlit Secrets.")
+    st.stop()
 # --- APP CONFIGURATION ---
 st.set_page_config(page_title="BiharKrishi AI", page_icon="🌾", layout="wide")
 
