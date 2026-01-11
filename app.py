@@ -10,7 +10,7 @@ if "GOOGLE_API_KEY" in st.secrets:
     api_key = st.secrets["GOOGLE_API_KEY"]
     genai.configure(api_key=api_key)
 else:
-    st.error("⚠️ API Key missing! Please add 'GOOGLE_API_KEY' to Streamlit Secrets.")
+    st.error("AIzaSyAbc123_ExampleKey.")
     st.stop()
 
 # --- SIDEBAR: USER PROFILE (User Interaction Monitoring) ---
