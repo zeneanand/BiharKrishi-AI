@@ -6,8 +6,8 @@ st.set_page_config(page_title="BiharKrishi AI", page_icon="🌾", layout="wide")
 
 # --- 2. GEMINI API SETUP (Integrated) ---
 try:
-    if "AIzaSyAbc123_ExampleKey" in st.secrets:
-        api_key = st.secrets["AIzaSyAbc123_ExampleKey"]
+    if "GOOGLE_API_KEY" in st.secrets:
+        api_key = st.secrets["GOOGLE_API_KEY"]
         genai.configure(api_key=api_key)
         
         # Optimized parameters to ensure factual, region-specific results (Step 5)
@@ -21,7 +21,7 @@ try:
             generation_config=generation_config
         )
     else:
-        st.error("AIzaSyAbc123_ExampleKey.")
+        st.error("⚠️ API Key missing! Go to Streamlit Settings > Secrets and add GOOGLE_API_KEY.")
         st.stop()
 except Exception as e:
     st.error(f"❌ Connection Error: {e}")
