@@ -1,6 +1,5 @@
  import streamlit as st
 import google.generativeai as genai
-
 # --- APP CONFIGURATION ---
 st.set_page_config(page_title="BiharKrishi AI", page_icon="🌾", layout="wide")
 
