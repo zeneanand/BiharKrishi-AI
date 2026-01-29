@@ -7,7 +7,7 @@ st.set_page_config(page_title="BiharKrishi AI", page_icon="🌾", layout="wide")
 # --- 2. GEMINI API SETUP (Integrated) ---
 try:
     if "GOOGLE_API_KEY" in st.secrets:
-        api_key = st.secrets["GOOGLE_API_KEY"]
+        api_key = st.secrets["AIzaSyCHjgosvvUqYZttekljG1wEbyIs2XNztDk"]
         genai.configure(api_key=api_key)
         
         # Optimized parameters to ensure factual, region-specific results (Step 5)
