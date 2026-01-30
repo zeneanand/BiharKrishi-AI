@@ -19,7 +19,8 @@ if "GOOGLE_API_KEY" not in st.secrets:
 
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
-models/gemini-1.0-pro-vision
+model = genai.GenerativeModel("models/gemini-1.0-pro-vision")
+
 
 # -----------------------------
 # SIDEBAR
