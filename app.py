@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 
 # --------------------------------------------------
-# 1. PAGE CONFIG
+# PAGE CONFIG
 # --------------------------------------------------
 st.set_page_config(
     page_title="BiharKrishi AI",
@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # --------------------------------------------------
-# 2. GEMINI SETUP (TEXT MODEL – WORKING)
+# GEMINI SETUP (WORKING MODEL)
 # --------------------------------------------------
 if "GOOGLE_API_KEY" not in st.secrets:
     st.error("❌ GOOGLE_API_KEY missing. Add it in Streamlit Secrets.")
@@ -19,7 +19,6 @@ if "GOOGLE_API_KEY" not in st.secrets:
 
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
-# ✅ ONLY model that reliably works
 model = genai.GenerativeModel(
     model_name="models/gemini-1.0-pro",
     generation_config={
@@ -29,7 +28,7 @@ model = genai.GenerativeModel(
 )
 
 # --------------------------------------------------
-# 3. SIDEBAR – FARMER PROFILE
+# SIDEBAR – FARMER PROFILE
 # --------------------------------------------------
 with st.sidebar:
     st.title("👤 Farmer Profile")
@@ -44,10 +43,10 @@ with st.sidebar:
         step=0.05
     )
 
-    st.info("Bihar-specific guidance for small farmers")
+    st.info("Region-specific agricultural guidance for Bihar farmers")
 
 # --------------------------------------------------
-# 4. MAIN UI
+# MAIN UI
 # --------------------------------------------------
 st.title("🌾 BiharKrishi AI")
 st.subheader("Smart Farming Assistant for Bihar Farmers")
@@ -74,16 +73,16 @@ with col2:
     )
 
 question = st.text_input(
-    "Ask your question",
+    "Ask your farming question",
     placeholder="How can I reduce diesel cost in irrigation?"
 )
 
 # --------------------------------------------------
-# 5. GENERATE RESPONSE
+# GENERATE RESPONSE
 # --------------------------------------------------
 if st.button("🌱 Get AI Advice"):
     if not question.strip():
-        st.warning("Please enter your farming question.")
+        st.warning("Please enter your question.")
     else:
         with st.spinner("Generating Bihar-specific advice..."):
             prompt = f"""
