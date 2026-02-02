@@ -1,10 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
 
-# =========================================================
-# SMART FARMING ASSISTANT – GEMINI 1.5 ONLY
-# =========================================================
-
 st.set_page_config(
     page_title="Smart Farming Assistant",
     page_icon="🌱",
@@ -12,19 +8,16 @@ st.set_page_config(
 )
 
 st.title("🌾 Smart Farming Assistant")
-st.caption("Powered by Google Gemini 1.5")
+st.caption("FA-2 | Powered by Gemini 1.5")
 
-# ---------------- API KEY ----------------
+# ---------- API KEY ----------
 st.sidebar.header("🔑 Gemini API Key")
-api_key = st.sidebar.text_input(
-    "Paste your Gemini API key",
-    type="password"
-)
+api_key = st.sidebar.text_input("Paste your API key", type="password")
 
 if api_key:
     genai.configure(api_key=api_key)
 
-# ---------------- USER INPUT ----------------
+# ---------- USER INPUT ----------
 st.subheader("👨‍🌾 Farmer Details")
 
 location = st.selectbox(
@@ -32,10 +25,7 @@ location = st.selectbox(
     ["Bihar (India)", "Punjab (India)", "Ghana", "Canada"]
 )
 
-crop = st.text_input(
-    "Crop / Topic",
-    placeholder="e.g. rice, pests, soil"
-)
+crop = st.text_input("Crop / Topic", placeholder="e.g. rice, pests, soil")
 
 preference = st.radio(
     "Farming Preference",
@@ -44,70 +34,51 @@ preference = st.radio(
 
 question = st.text_area(
     "Ask your farming question",
-    placeholder="e.g. What crops should I grow this month?"
+    placeholder="e.g. What should I grow this month?"
 )
 
-# ---------------- PROMPT BUILDER ----------------
+# ---------- PROMPT ----------
 def build_prompt(location, crop, preference, question):
     return f"""
-You are an agricultural expert assisting a small or marginal farmer.
+You are an agricultural expert helping small and marginal farmers.
 
 Location: {location}
 Crop or Topic: {crop}
-Farming Preference: {preference}
+Preference: {preference}
 
-Question:
-{question}
+Question: {question}
 
-Respond with:
-- Clear bullet points
-- Simple, non-technical language
-- Low-cost and sustainable solutions
-- A short explanation of why the advice works
+Give:
+- Bullet-point advice
+- Simple language
+- Low-cost solutions
+- Short explanation why it works
 """
 
-# ---------------- GEMINI 1.5 CALL ----------------
+# ---------- GEMINI ----------
 def get_gemini_response(prompt):
-    try:
-        model = genai.GenerativeModel("gemini-1.5-pro-latest")
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    response = model.generate_content(prompt)
 
-        response = model.generate_content(
-            prompt,
-            generation_config={
-                "temperature": 0.4,
-                "max_output_tokens": 600
-            }
-        )
+    return response.text if response.text else "No response generated."
 
-        if response and hasattr(response, "text") and response.text:
-            return response.text
-        else:
-            return "⚠️ Gemini 1.5 returned no response."
-
-    except Exception as e:
-        return f"❌ Gemini 1.5 API Error:\n{str(e)}"
-
-# ---------------- BUTTON ----------------
+# ---------- BUTTON ----------
 if st.button("🌱 Get Farming Advice"):
     if not api_key:
-        st.error("❌ Please enter your Gemini API key.")
+        st.error("Please enter your Gemini API key.")
     elif not question.strip():
-        st.warning("⚠️ Please type a farming question.")
+        st.warning("Please type a question.")
     else:
-        with st.spinner("Thinking like an agri expert..."):
-            output = get_gemini_response(
-                build_prompt(location, crop, preference, question)
-            )
+        with st.spinner("Thinking like an agri expert…"):
+            try:
+                output = get_gemini_response(
+                    build_prompt(location, crop, preference, question)
+                )
+                st.subheader("✅ AI Recommendation")
+                st.markdown(output)
+            except Exception as e:
+                st.error("API Error")
+                st.code(str(e))
 
-        st.subheader("✅ AI Recommendation")
-        st.markdown(output)
-
-        with st.expander("ℹ️ Why this advice works"):
-            st.write(
-                "This advice is generated using region-specific context, "
-                "small-farmer constraints, and sustainable agricultural practices."
-            )
-
-# ---------------- FOOTER ----------------
 st.markdown("---")
-st.caption("FA-2 | Smart Farming Assistant | Gemini 1.5")
+st.caption("FA-2 | Smart Farming Assistant")
