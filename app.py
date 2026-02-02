@@ -93,13 +93,13 @@ st.markdown("""
 # 🚀 SECURE API CONNECTION (Step 6)
 # ============================================
 if "GOOGLE_API_KEY" in st.secrets:
-    genai.configure(api_key=st.secrets["GOOGLE_API_KEY"]) 
+    genai.configure(api_key=st.secrets["AIzaSyDmoY3_mBl00-KYhxLYTzNwNpsO6if0GxA"]) 
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
+        model_name="gemini-3-flash-preview",
         generation_config={"temperature": 0.2, "max_output_tokens": 500}
     )
 else:
-    st.error("⚠️ API Key missing! Add GOOGLE_API_KEY to Streamlit Secrets.")
+    st.error("AIzaSyDmoY3_mBl00-KYhxLYTzNwNpsO6if0GxA")
     st.stop()
 
 # ============================================
