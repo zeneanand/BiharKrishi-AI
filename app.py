@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 # 🎨 PAGE CONFIGURATION
 # ============================================
 st.set_page_config(
-    page_title="🌱 AgroNova: Multi-State Smart Assistant",
+    page_title="🌱 AgroNova Multi-State AI",
     page_icon="🌾",
     layout="wide"
 )
 
 # ============================================
-# 🌑 VIBRANT DARK UI (Design & Implementation)
+# 🌈 VIBRANT DARK CSS (FA-2 Premium UI)
 # ============================================
 st.markdown("""
 <style>
@@ -23,6 +23,16 @@ st.markdown("""
         color: white; padding: 40px; border-radius: 20px;
         text-align: center; margin-bottom: 25px;
         box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+    }
+    /* Styling the Sidebar Inputs */
+    section[data-testid="stSidebar"] {
+        background-color: #0a1118;
+        border-right: 1px solid #38ef7d;
+    }
+    .stTextInput>div>div>input {
+        background-color: #1a262f;
+        color: #38ef7d;
+        border: 1px solid #38ef7d;
     }
     .stButton>button {
         background: linear-gradient(45deg, #f7971e 0%, #ffd200 100%);
@@ -43,104 +53,72 @@ else:
     st.stop()
 
 # ============================================
-# 🚀 HEADER & STATE SELECTION
+# 🚀 DYNAMIC SIDEBAR (Text Box Persona)
 # ============================================
-st.markdown("""
-<div class="main-header">
-    <h1 style="margin:0;">🌾 AgroNova Smart Assistant</h1>
-    <p style="font-size:1.2rem;">Serving Farmers across Bihar and Gujarat (Saurashtra)</p>
-</div>
-""", unsafe_allow_html=True)
-
-# State Selection determines the User Persona and Context
-selected_state = st.selectbox("🌍 Select Your State:", ["Bihar", "Gujarat (Saurashtra)"])
-
-# ============================================
-# 👤 DYNAMIC PERSONA LOADER (Saurashtra & Bihar)
-# ============================================
-if selected_state == "Bihar":
-    persona = {"name": "Ram Kumar Baitha", "loc": "Kishanganj", "size": "0.25 Ha", "focus": "Marginal Farming"}
-    districts = ["Samastipur", "Kishanganj", "Gaya", "Saharsa", "Muzaffarpur"]
-    crops = ["Rice", "Wheat", "Maize", "Litchi"]
-else:
-    # Data from Saurashtra Storyboard [cite: 95, 106, 107]
-    persona = {"name": "Mansukhbhai Patel", "loc": "Gondal, Rajkot", "size": "4 Acres", "focus": "Medium-scale"}
-    districts = ["Rajkot", "Jamnagar", "Amreli", "Junagadh", "Porbandar"]
-    crops = ["Groundnut (Kharif)", "Cumin/Jeera (Rabi)", "Cotton"]
-
 with st.sidebar:
-    st.title("👤 Current Farmer Persona")
-    st.success(f"**Name:** {persona['name']}")
-    st.info(f"**Location:** {persona['loc']}\n\n**Land:** {persona['size']}")
-    st.write(f"**Focus:** {persona['focus']}")
+    st.title("👤 Edit Farmer Profile")
+    st.markdown("---")
+    # CHANGED: These are now text_input boxes for FA-2 interaction requirements
+    farmer_name = st.text_input("Farmer Name", value="Ram Kumar Baitha")
+    home_location = st.text_input("Home Location", value="Kishanganj, Bihar")
+    land_size = st.text_input("Land Size (e.g., 0.25 Ha)", value="0.25 Ha")
+    
     st.divider()
+    st.info("The AI will use these details to personalize its advice.")
+    
+    # Validation Checklist for Step 5
     st.markdown("### 📋 Validation Checklist")
     st.checkbox("Region-Specific", value=True)
     st.checkbox("Logical Reasoning", value=True)
     st.checkbox("Simple Language", value=True)
 
 # ============================================
-# 🎯 INPUT INTERACTION
+# 🚀 MAIN UI & STATE SELECTION
 # ============================================
+st.markdown("""
+<div class="main-header">
+    <h1 style="margin:0;">🌾 AgroNova Smart Assistant</h1>
+    <p style="font-size:1.2rem;">Providing Site-Specific Advice for India & Beyond</p>
+</div>
+""", unsafe_allow_html=True)
+
+selected_state = st.selectbox("🌍 Select State for Research Context:", ["Bihar", "Gujarat (Saurashtra)"])
+
 col1, col2 = st.columns(2)
 with col1:
-    district = st.selectbox(f"Select {selected_state} District:", districts)
-    crop = st.selectbox("Select Crop:", crops)
+    district = st.text_input("Current District", value="Samastipur")
+    crop = st.text_input("Crop Name", value="Maize/Groundnut")
 
 with col2:
-    category = st.selectbox("Help Category:", ["Pest Management", "Sowing & Weather", "Water/Subsidies", "Soil Health"])
-    user_query = st.text_input("Ask a specific question:", placeholder="e.g., Treatment for White Grub?")
+    category = st.selectbox("Category", ["Pest Management", "Sowing & Weather", "Soil Health"])
+    query = st.text_input("Your Question", placeholder="How can I save diesel costs?")
 
 # ============================================
 # ⚡ AI ADVICE & FORMATTING (Step 4)
 # ============================================
 if st.button("🚀 GET LOCALIZED ADVICE"):
-    with st.spinner(f"🧠 Consulting {selected_state} Agricultural Data..."):
-        # Combining persona data with state-specific research [cite: 104, 111, 122]
-        context_prompt = f"""
-        Role: Expert Agricultural Consultant for {selected_state}, India.
-        Persona: {persona['name']} from {persona['loc']}. 
-        Research Context for {selected_state}:
-        - If Gujarat: Use JAU standards, White Grub/Pink Bollworm info, and GGRC subsidy details.
-        - If Bihar: Use BAMETI and NABARD State Focus Paper data for floods/diesel costs.
-        
-        Current Query: {user_query} regarding {crop} at {district}.
-        
-        Instructions (FA-2 Requirement):
-        1. Clean and format Gemini's output into a bulleted list[cite: 4, 10, 11].
-        2. Provide a 'Why' justification for every suggestion to build trust[cite: 7, 12].
-        3. Use simple, non-technical language[cite: 36].
+    with st.spinner("🧠 AI is consulting local agricultural standards..."):
+        # Prompt logic incorporating the new text-box profile data
+        full_prompt = f"""
+        Expert Consultant for {selected_state}. 
+        User: {farmer_name} from {home_location} with {land_size}.
+        Context: District {district}, Crop {crop}. 
+        Question: {query}
+        Instructions (FA-2 Requirement): Provide a bulleted list with 'Why' justifications for each step.
         """
         
         try:
-            response = model.generate_content(context_prompt)
-            st.markdown(f"### 💡 Expert Advice for {selected_state}")
+            response = model.generate_content(full_prompt)
+            st.markdown(f"### 💡 Recommendations for {farmer_name}")
             st.write(response.text)
+            st.balloons()
         except Exception as e:
             st.error(f"Error: {e}")
 
 # ============================================
-# 📊 REGIONAL DATA VISUALIZATION
+# 📊 DATA VISUALIZATION (Step 6)
 # ============================================
 st.write("---")
-st.markdown(f"### 📈 Productivity Growth: {selected_state}")
-
-# Grouped bar chart showing yield potential with AI [cite: 60, 85]
-impact_data = {
-    'Crop': crops[:3],
-    'Traditional Yield': [1200, 1500, 900],
-    'AI-Smart Yield': [1800, 2100, 1400]
-}
-df = pd.DataFrame(impact_data)
-
-fig, ax = plt.subplots(figsize=(10, 4), facecolor='#050a0e')
-ax.set_facecolor('#050a0e')
-x = range(len(df['Crop']))
-ax.bar([i - 0.2 for i in x], df['Traditional Yield'], width=0.4, label='Traditional', color='#ff4b2b')
-ax.bar([i + 0.2 for i in x], df['AI-Smart Yield'], width=0.4, label='AI-Smart', color='#00f260')
-
-ax.set_xticks(x)
-ax.set_xticklabels(df['Crop'], color='white')
-ax.tick_params(colors='white')
-ax.legend()
-st.pyplot(fig)
+st.markdown("### 📈 Projected Growth Insights")
+chart_data = pd.DataFrame({'Season': ['Kharif', 'Rabi', 'Zaid'], 'Standard': [100, 150, 80], 'AI-Optimized': [160, 210, 130]})
+st.bar_chart(chart_data.set_index('Season'))
