@@ -1,5 +1,8 @@
 streamlit
 google-generativeai
-requests
 pandas
-
+numpy
+matplotlib
+seaborn
+requests
+python-dotenv
