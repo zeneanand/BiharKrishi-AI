@@ -1,5 +1,10 @@
 import streamlit as st
 import google.generativeai as genai
+genai.configure(api_key="AIzaSyAAG_md_WBWJcTMf8pjBedRWWuIWJQNeSU")
+
+for m in genai.list_models():
+    print(m.name)
+
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
@@ -61,21 +66,23 @@ Give:
 
 # ---------------- GEMINI FUNCTION ----------------
 def get_gemini_response(prompt):
-    model = genai.GenerativeModel("gemini-pro")
-    response = model.generate_content(
-        prompt,
-        generation_config={
-            "temperature": 0.4,
-            "max_output_tokens": 500
-        }
-    )
+    try:
+        model = genai.GenerativeModel("gemini-pro")
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                "temperature": 0.4,
+                "max_output_tokens": 500
+            }
+        )
 
-    if response and response.text:
-        return response.text
-    else:
-        return "⚠️ No response generated. Please rephrase your question."
+        if hasattr(response, "text") and response.text:
+            return response.text
+        else:
+            return "⚠️ Gemini returned an empty response."
 
-
+    except Exception as e:
+        return f"❌ Gemini API failed: {str(e)}"
 # ---------------- BUTTON ----------------
 if st.button("🌱 Get Farming Advice"):
     if not api_key:
