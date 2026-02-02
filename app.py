@@ -61,7 +61,7 @@ Give:
 
 # ---------------- GEMINI FUNCTION ----------------
 def get_gemini_response(prompt):
-    model = genai.GenerativeModel("models/gemini-pro")
+    model = genai.GenerativeModel("gemini-pro")
     response = model.generate_content(
         prompt,
         generation_config={
@@ -73,7 +73,7 @@ def get_gemini_response(prompt):
     if response and response.text:
         return response.text
     else:
-        return "⚠️ No response generated. Please try a different question."
+        return "⚠️ No response generated. Please rephrase your question."
 
 
 # ---------------- BUTTON ----------------
