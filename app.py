@@ -1,63 +1,99 @@
 import streamlit as st
-import openai
+import google.generativeai as genai
 
-st.set_page_config(page_title="BiharKrishi AI", page_icon="🌾", layout="wide")
+# ---------------- CONFIG ----------------
+st.set_page_config(
+    page_title="Smart Farming Assistant",
+    page_icon="🌱",
+    layout="centered"
+)
 
-# ------------------ Sidebar ------------------
-with st.sidebar:
-    st.title("👤 Farmer Profile")
-    farmer_name = st.text_input("Farmer Name", "Ram Kumar Baitha")
-    farmer_location = st.text_input("Location", "Kishanganj, Bihar")
-    land_size = st.number_input("Land Size (Hectares)", 0.01, 10.0, 0.25)
+st.title("🌾 Smart Farming Assistant")
+st.caption("AI-powered farming advice using Gemini 1.5")
 
-# ------------------ Main UI ------------------
-st.title("🌾 BiharKrishi AI")
-district = st.text_input("District", "Samastipur")
-crop_stage = st.selectbox("Crop Stage", ["Nursery", "Vegetative", "Flowering", "Maturity", "Harvest"])
-category = st.selectbox("Help Category", ["Diesel Cost Saving", "Irrigation", "Fertilizer", "Pest Control"])
-question = st.text_input("Ask your question", "How can I reduce diesel cost in irrigation?")
+# ---------------- API KEY ----------------
+st.sidebar.header("🔑 API Configuration")
+api_key = st.sidebar.text_input(
+    "Enter your Gemini API Key",
+    type="password"
+)
 
-# ------------------ OpenAI API ------------------
-OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY")
+if api_key:
+    genai.configure(api_key=api_key)
 
-if st.button("🌱 Get AI Advice"):
-    if not question.strip():
-        st.warning("Please enter your question.")
-    else:
-        import openai
-        openai.api_key = OPENAI_API_KEY
-        prompt = f"""
-You are an expert agricultural advisor for Bihar, India.
+# ---------------- USER INPUT ----------------
+st.subheader("👨‍🌾 Farmer Details")
 
-Farmer Profile:
-- Name: {farmer_name}
-- Location: {farmer_location}
-- Land Size: {land_size} hectares
+location = st.selectbox(
+    "Select your region",
+    ["Bihar (India)", "Punjab (India)", "Ghana", "Canada"]
+)
 
-Context:
-- District: {district}
-- Crop Stage: {crop_stage}
-- Category: {category}
+crop = st.text_input("Crop / Farming topic (e.g. rice, vegetables, soil, pests)")
 
-Question:
-{question}
+preference = st.radio(
+    "Farming Preference",
+    ["General", "Organic only", "Low water usage"]
+)
 
-Give 3–5 practical bullet points.
-Explain briefly why each helps.
-Use simple English mixed with Hindi words.
-Advice must suit small farmers.
+question = st.text_area(
+    "Ask your farming question",
+    placeholder="e.g. What should I grow this month?"
+)
+
+# ---------------- PROMPT BUILDER ----------------
+def build_prompt(location, crop, preference, question):
+    return f"""
+You are an agricultural expert helping a small or marginal farmer.
+
+Location: {location}
+Crop or Topic: {crop}
+Farming Preference: {preference}
+
+Question: {question}
+
+Give:
+1. Clear bullet-point advice
+2. Simple language
+3. Low-cost solutions where possible
+4. A short explanation of WHY the advice works
 """
 
-        with st.spinner("Generating advice..."):
-            try:
-                response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=0.2,
-                    max_tokens=400
-                )
-                st.markdown("### 💡 Expert Advice")
-                st.write(response['choices'][0]['message']['content'])
-            except Exception as e:
-                st.error(f"❌ Error: {e}")
+# ---------------- GEMINI CALL ----------------
+def get_gemini_response(prompt):
+    model = genai.GenerativeModel("gemini-1.5-pro")
+    response = model.generate_content(
+        prompt,
+        generation_config={
+            "temperature": 0.4,
+            "max_output_tokens": 600
+        }
+    )
+    return response.text
 
+# ---------------- BUTTON ACTION ----------------
+if st.button("🌱 Get Farming Advice"):
+    if not api_key:
+        st.error("Please enter your Gemini API key.")
+    elif not question:
+        st.warning("Please enter a farming question.")
+    else:
+        with st.spinner("Thinking like an agri expert..."):
+            prompt = build_prompt(location, crop, preference, question)
+            try:
+                output = get_gemini_response(prompt)
+                st.subheader("✅ AI Recommendation")
+                st.markdown(output)
+
+                with st.expander("ℹ️ Why this advice works"):
+                    st.write(
+                        "This advice is generated using region-specific context, "
+                        "small-farmer constraints, and sustainable practices to ensure "
+                        "practical and safe farming decisions."
+                    )
+            except Exception as e:
+                st.error("Something went wrong. Please try again.")
+
+# ---------------- FOOTER ----------------
+st.markdown("---")
+st.caption("Built for FA-2 | Generative AI – Smart Farming Assistant")
