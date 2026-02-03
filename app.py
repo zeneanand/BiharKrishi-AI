@@ -104,23 +104,26 @@ if st.button("🚀 GET LOCALIZED ADVICE"):
     with st.spinner(f"🧠 Consulting {selected_state} Agricultural Data..."):
         # Context uses the dynamic persona data from text boxes [cite: 49]
         context_prompt = f"""
-Role: Lead Agronomist for AgroNova ({selected_state}). 
-Advising {farmer_name} in {farmer_loc} ({land_size}).
+Role: Lead Agronomist for AgroNova. 
+Persona: You are speaking directly to {farmer_name} from {farmer_loc}. 
+Tone: Professional, supportive, and localized. 
 
-Task: Provide a localized plan for {crop} regarding {category}.
-Question: {user_query}
+Constraint: START your response immediately with "Namaste {farmer_name} ji." Do not include any introductory fluff, "Sure, I can help," or meta-talk.
 
-Requirements:
-- Use the "Action -> Why -> Benefit" framework for each point.
-- Ensure advice is specific to {district}'s climate and soil.
-- Use simple language and bold headers.
-- Include one 'Pro-Tip' for this specific region.
+Task: Provide localized advice for {crop} regarding {category} in {district}.
+Current Question: {user_query}
+
+Instructions:
+1. Use the "Action -> Why -> Benefit" framework.
+2. Provide specific instructions for the {district} region.
+3. Use simple, non-technical language.
+4. Format with bold headers and bullet points.
 """
         
         try:
             response = model.generate_content(context_prompt)
-            st.markdown(f"### 💡 Expert Advice for {selected_state}")
-            st.write(response.text)
+            with st.chat_message("assistant", avatar="🌾"):
+            st.markdown(response.text)
         except Exception as e:
             st.error(f"Error: {e}")
 
