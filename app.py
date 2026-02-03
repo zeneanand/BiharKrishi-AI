@@ -39,7 +39,7 @@ if "GOOGLE_API_KEY" in st.secrets:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
     # Temperature 0.2 prevents hallucination and ensures region-specific accuracy [cite: 23, 31]
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
+        model_name="gemini-3-flash-preview",
         generation_config={"temperature": 0.2, "max_output_tokens": 500}
     )
 else:
