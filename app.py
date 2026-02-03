@@ -108,17 +108,7 @@ Role: Expert Lead Agronomist at AgroNova.
 Target Audience: {farmer_name}, a farmer in {district}, {selected_state}.
 Topic: {category} for {crop}.
 
-STRICT OUTPUT FORMAT:
-1. Start with: "Namaste {farmer_name} ji. As the Lead Agronomist for AgroNova, here is my detailed advice for your {crop} in {district}:"
-2. Provide 3 distinct sections following the "Action → Why → Benefit" model.
-3. Be descriptive. Write at least 2 sentences for each 'Why' and 'Benefit'.
 
-EXAMPLE OF SCALE:
-- Action: Apply well-decomposed Cow Dung Manure (FYM).
-- Why: This improves the soil structure and increases the water-holding capacity of your land in {district}. It provides essential micronutrients that chemical fertilizers lack.
-- Benefit: Your {crop} will have stronger roots and be more resistant to dry spells, ultimately saving you money on irrigation.
-
-CURRENT QUERY TO ANSWER:
 Question: {user_query}
 """
         
