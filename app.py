@@ -104,22 +104,22 @@ if st.button("🚀 GET LOCALIZED ADVICE"):
     with st.spinner(f"🧠 Consulting {selected_state} Agricultural Data..."):
         # Context uses the dynamic persona data from text boxes [cite: 49]
         context_prompt = f"""
-Role: You are the Lead Agronomist for AgroNova. 
-Instruction: Speak directly to the farmer. Start with "Namaste {farmer_name} ji."
+Role: Expert Lead Agronomist at AgroNova.
+Target Audience: {farmer_name}, a farmer in {district}, {selected_state}.
+Topic: {category} for {crop}.
 
-Task: Provide a detailed agricultural consultation for {crop} in {district}, {selected_state}.
-Category: {category}
-User Query: {user_query}
+STRICT OUTPUT FORMAT:
+1. Start with: "Namaste {farmer_name} ji. As the Lead Agronomist for AgroNova, here is my detailed advice for your {crop} in {district}:"
+2. Provide 3 distinct sections following the "Action → Why → Benefit" model.
+3. Be descriptive. Write at least 2 sentences for each 'Why' and 'Benefit'.
 
-Response Structure (MANDATORY):
-1. Greeting: "Namaste {farmer_name} ji. As the Lead Agronomist for AgroNova, here is my advice for your {crop} in {district}:"
-2. Detailed Advice: Provide at least 3-4 specific points using the "Action → Why → Benefit" framework.
-   - **Action**: What should the farmer do?
-   - **Why**: The logic behind it.
-   - **Benefit**: How it helps their yield or savings.
-3. Summary: A brief closing sentence of encouragement.
+EXAMPLE OF SCALE:
+- Action: Apply well-decomposed Cow Dung Manure (FYM).
+- Why: This improves the soil structure and increases the water-holding capacity of your land in {district}. It provides essential micronutrients that chemical fertilizers lack.
+- Benefit: Your {crop} will have stronger roots and be more resistant to dry spells, ultimately saving you money on irrigation.
 
-Constraint: Do not just list the headers. Write 2-3 sentences for each point. Keep language simple.
+CURRENT QUERY TO ANSWER:
+Question: {user_query}
 """
         
         try:
