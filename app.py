@@ -104,26 +104,30 @@ if st.button("🚀 GET LOCALIZED ADVICE"):
     with st.spinner(f"🧠 Consulting {selected_state} Agricultural Data..."):
         # Context uses the dynamic persona data from text boxes [cite: 49]
         context_prompt = f"""
-Role: Lead Agronomist for AgroNova. 
-Persona: You are speaking directly to {farmer_name} from {farmer_loc}. 
-Tone: Professional, supportive, and localized. 
+Role: You are the Lead Agronomist for AgroNova. 
+Instruction: Speak directly to the farmer. Start with "Namaste {farmer_name} ji."
 
-Constraint: START your response immediately with "Namaste {farmer_name} ji." Do not include any introductory fluff, "Sure, I can help," or meta-talk.
+Task: Provide a detailed agricultural consultation for {crop} in {district}, {selected_state}.
+Category: {category}
+User Query: {user_query}
 
-Task: Provide localized advice for {crop} regarding {category} in {district}.
-Current Question: {user_query}
+Response Structure (MANDATORY):
+1. Greeting: "Namaste {farmer_name} ji. As the Lead Agronomist for AgroNova, here is my advice for your {crop} in {district}:"
+2. Detailed Advice: Provide at least 3-4 specific points using the "Action → Why → Benefit" framework.
+   - **Action**: What should the farmer do?
+   - **Why**: The logic behind it.
+   - **Benefit**: How it helps their yield or savings.
+3. Summary: A brief closing sentence of encouragement.
 
-Instructions:
-1. Use the "Action -> Why -> Benefit" framework.
-2. Provide specific instructions for the {district} region.
-3. Use simple, non-technical language.
-4. Format with bold headers and bullet points.
+Constraint: Do not just list the headers. Write 2-3 sentences for each point. Keep language simple.
 """
         
         try:
             response = model.generate_content(context_prompt)
-            with st.chat_message("assistant", avatar="🌾"):
-                st.markdown(response.text)
+            # Use a container for better visibility
+            with st.container():
+                st.markdown(f"### 💡 Expert Advice for {farmer_name}")
+                st.info(response.text) # This puts it in a nice blue box
         except Exception as e:
             st.error(f"Error: {e}")
 
