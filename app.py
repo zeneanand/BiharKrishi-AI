@@ -123,7 +123,7 @@ Instructions:
         try:
             response = model.generate_content(context_prompt)
             with st.chat_message("assistant", avatar="🌾"):
-            st.markdown(response.text)
+                st.markdown(response.text)
         except Exception as e:
             st.error(f"Error: {e}")
 
