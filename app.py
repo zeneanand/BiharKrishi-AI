@@ -104,16 +104,18 @@ if st.button("🚀 GET LOCALIZED ADVICE"):
     with st.spinner(f"🧠 Consulting {selected_state} Agricultural Data..."):
         # Context uses the dynamic persona data from text boxes [cite: 49]
         context_prompt = f"""
-        Role: Expert Agricultural Consultant for {selected_state}, India.
-        Persona: {farmer_name} from {farmer_loc} with {land_size}. 
-        
-        Instructions (FA-2 Requirement):
-        1. Format the response into a clear bulleted list[cite: 1, 11].
-        2. Provide a 'Why' (reasoning) for each suggestion to build trust[cite: 7, 12].
-        3. Use simple, non-technical language[cite: 36].
-        
-        Question: {user_query} regarding {crop} at {district}.
-        """
+Role: Lead Agronomist for AgroNova ({selected_state}). 
+Advising {farmer_name} in {farmer_loc} ({land_size}).
+
+Task: Provide a localized plan for {crop} regarding {category}.
+Question: {user_query}
+
+Requirements:
+- Use the "Action -> Why -> Benefit" framework for each point.
+- Ensure advice is specific to {district}'s climate and soil.
+- Use simple language and bold headers.
+- Include one 'Pro-Tip' for this specific region.
+"""
         
         try:
             response = model.generate_content(context_prompt)
